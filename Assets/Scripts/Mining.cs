@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Mining : MonoBehaviour
@@ -8,6 +7,12 @@ public class Mining : MonoBehaviour
     private float timer = 0;
     private bool isMining = false;
     private IEnumerator coroutineMine;
+    private enum Ressources
+    {
+        Stone,
+        Iron,
+        Gold
+    }
 
     IEnumerator Mine()
     {
@@ -20,18 +25,32 @@ public class Mining : MonoBehaviour
             timer += Time.deltaTime;
         }
 
-        Debug.Log("Finished mining");
+        Debug.Log("Finished mining. You mined " + GenerateRessource());
+        timer = 0;
+        isMining = false;
         StopCoroutine(coroutineMine);
-    }
 
-    private void Start()
-    {
-        coroutineMine = Mine();
     }
 
     public string GenerateRessource()
     {
-        return "Stone";
+        float rng = Random.value;
+        string ressource = null;
+
+        if (rng < 0.5f)
+        {
+            ressource = Ressources.Stone.ToString();
+        }
+        else if (rng > 0.5f && rng < 0.9f)
+        {
+            ressource = Ressources.Iron.ToString();
+        }
+        else if (rng > 0.9f && rng < 1)
+        {
+            ressource = Ressources.Gold.ToString();
+        }
+
+        return ressource;
     }
 
     private void OnTriggerStay2D(Collider2D collision)
@@ -40,6 +59,7 @@ public class Mining : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.E) && !isMining)
             {
+                coroutineMine = Mine();
                 StartCoroutine(coroutineMine);
             }
         }
@@ -49,9 +69,13 @@ public class Mining : MonoBehaviour
     {
         if (collision.tag == "Player")
         {
-            StopCoroutine(coroutineMine);
-            Debug.Log("Stopped mining prematurely");
+            if (isMining)
+            {
+                isMining = false;
+                StopCoroutine(coroutineMine);
+                Debug.Log("Stopped mining prematurely");
+            }
         }
     }
 }
-    
+
