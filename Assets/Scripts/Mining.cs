@@ -6,6 +6,8 @@ public class Mining : MonoBehaviour
 {
     private PlayerInventory playerInventory;
     private float timer = 0;
+    private float colorTimerA = 0;
+    private float colorTimerB = 0;
     private bool isMining = false;
     private IEnumerator coroutineMine;
     private enum Ressources
@@ -19,10 +21,23 @@ public class Mining : MonoBehaviour
     {
         isMining = true;
 
+        colorTimerA = 0;
+        colorTimerB = 0;
+
         while (timer < 4)
         {
             yield return new WaitForSeconds(0);
             timer += Time.deltaTime;
+            if (timer / 4 < 0.5f)
+            {
+                GameObject.Find("MiningBar").GetComponent<Image>().color = Color.Lerp(Color.red, Color.yellow, colorTimerA / 2);
+                colorTimerA += Time.deltaTime;
+            }
+            else
+            {
+                GameObject.Find("MiningBar").GetComponent<Image>().color = Color.Lerp(Color.yellow, Color.green, colorTimerB / 2);
+                colorTimerB += Time.deltaTime;
+            }
             GameObject.Find("MiningBar").GetComponent<Image>().fillAmount = timer / 4;
         }
 
@@ -36,7 +51,7 @@ public class Mining : MonoBehaviour
 
     private void Start()
     {
-        playerInventory = GameObject.Find("Player").GetComponent<PlayerInventory>(); 
+        playerInventory = GameObject.Find("Player").GetComponent<PlayerInventory>();
     }
 
     public void GenerateRessource()
@@ -79,6 +94,8 @@ public class Mining : MonoBehaviour
             if (isMining)
             {
                 isMining = false;
+                timer = 0;
+                GameObject.Find("MiningBar").GetComponent<Image>().fillAmount = timer;
                 StopCoroutine(coroutineMine);
                 Debug.Log("Stopped mining prematurely");
             }
