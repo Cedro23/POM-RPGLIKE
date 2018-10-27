@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Mining : MonoBehaviour
 {
-
+    private PlayerInventory playerInventory;
     private float timer = 0;
     private bool isMining = false;
     private IEnumerator coroutineMine;
@@ -17,22 +18,28 @@ public class Mining : MonoBehaviour
     IEnumerator Mine()
     {
         isMining = true;
-        Debug.Log("Started mining");
 
         while (timer < 4)
         {
             yield return new WaitForSeconds(0);
             timer += Time.deltaTime;
+            GameObject.Find("MiningBar").GetComponent<Image>().fillAmount = timer / 4;
         }
 
-        Debug.Log("Finished mining. You mined " + GenerateRessource());
+        GenerateRessource();
         timer = 0;
+        GameObject.Find("MiningBar").GetComponent<Image>().fillAmount = timer;
         isMining = false;
         StopCoroutine(coroutineMine);
 
     }
 
-    public string GenerateRessource()
+    private void Start()
+    {
+        playerInventory = GameObject.Find("Player").GetComponent<PlayerInventory>(); 
+    }
+
+    public void GenerateRessource()
     {
         float rng = Random.value;
         string ressource = null;
@@ -50,7 +57,7 @@ public class Mining : MonoBehaviour
             ressource = Ressources.Gold.ToString();
         }
 
-        return ressource;
+        playerInventory.AddItem(ressource);
     }
 
     private void OnTriggerStay2D(Collider2D collision)

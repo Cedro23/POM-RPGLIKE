@@ -1,11 +1,14 @@
-﻿using System.Collections;
+﻿using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class PlayerInventory : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
+    private List<string> inventory = new List<string>();
+    private int lenght = 10;
+
+
+    // Use this for initialization
+    void Start () {
 		
 	}
 	
@@ -13,4 +16,18 @@ public class PlayerInventory : MonoBehaviour {
 	void Update () {
 		
 	}
+
+    public void AddItem(string _item)
+    {
+        if (inventory.Count < lenght)
+        {
+            inventory.Add(_item);
+        }
+        else
+        {
+            Debug.Log("Inventory is full");
+        }
+    }
+
+
 }
