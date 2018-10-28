@@ -79,7 +79,7 @@ public class Mining : MonoBehaviour
     {
         if (collision.tag == "Player")
         {
-            if (Input.GetKeyDown(KeyCode.E) && !isMining)
+            if (Input.GetKeyDown(KeyCode.E) && !isMining && !playerInventory.IsFull)
             {
                 coroutineMine = Mine();
                 StartCoroutine(coroutineMine);

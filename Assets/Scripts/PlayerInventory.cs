@@ -1,33 +1,68 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
-public class PlayerInventory : MonoBehaviour {
+public class PlayerInventory : MonoBehaviour
+{
 
     private List<string> inventory = new List<string>();
     private int lenght = 10;
 
+    private int stoneQuant;
+    private int ironQuant;
+    private int goldQuant;
+    private int total;
 
-    // Use this for initialization
-    void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public bool IsFull{ get; set; }
 
-    public void AddItem(string _item)
+    private void Start()
     {
-        if (inventory.Count < lenght)
+        UpdateTotal();
+        UpdateDisplayedInventory();
+    }
+
+    private void UpdateTotal()
+    {
+        total = 0;
+        total = stoneQuant + ironQuant + goldQuant;
+        if (total >= lenght)
         {
-            inventory.Add(_item);
-        }
-        else
-        {
-            Debug.Log("Inventory is full");
+            GameObject.Find("Total").GetComponentInChildren<Text>().color = Color.red;
+            IsFull = true;
         }
     }
 
+    private void UpdateDisplayedInventory()
+    {
+        GameObject.Find("Stone").GetComponentInChildren<Text>().text = stoneQuant.ToString();
+        GameObject.Find("Iron").GetComponentInChildren<Text>().text = ironQuant.ToString();
+        GameObject.Find("Gold").GetComponentInChildren<Text>().text = goldQuant.ToString();
+        GameObject.Find("Total").GetComponentInChildren<Text>().text = total.ToString() + "/" + lenght;
+    }
 
+    public void AddItem(string _item)
+    {
+        if (!IsFull)
+        {
+            inventory.Add(_item);
+
+            switch (_item)
+            {
+                case "Stone":
+                    stoneQuant++;
+                    break;
+                case "Iron":
+                    ironQuant++;
+                    break;
+                case "Gold":
+                    goldQuant++;
+                    break;
+                default:
+                    break;
+            }
+
+            UpdateTotal();
+            UpdateDisplayedInventory();
+        }
+    }
 }
